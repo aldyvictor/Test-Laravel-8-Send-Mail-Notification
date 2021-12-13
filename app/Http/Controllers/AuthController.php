@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\SendOtpMail;
+use App\Models\OtpVerification;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -69,6 +72,19 @@ class AuthController extends Controller
         // Generate OTP code 6 digits
          $arr = [0,1,2,3,4,5,6,7,8,9];
          $arr = implode('',Arr::random($arr, 6));
+
+         $otp_codes = OtpVerification::create([
+            'email' => $request->email,
+            'otp_code' => $arr,
+            'user_id' => $user->id
+         ]);
+
+
+         Mail::to($user)->send(new SendOtpMail($otp_codes, $user->name));
+
+        return response()->json([
+            'message' => 'Input User '.$user->name.' Success'
+        ], 201);
 
     }
 
