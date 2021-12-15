@@ -19,4 +19,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Register User
 Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
+
+// Verify User
+Route::post('/otp-verify/{id}', [AuthController::class, 'otpVerification'])->name('otp.verify');
+

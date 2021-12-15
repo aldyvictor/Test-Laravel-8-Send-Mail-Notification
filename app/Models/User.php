@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_verified'
     ];
 
     /**
@@ -42,8 +43,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function otpCode()
+    public function otpCodes()
     {
-        $this->hasMany(OtpVerification::class, 'user_id', 'id');
+        return $this->hasMany(OtpVerification::class);
     }
 }

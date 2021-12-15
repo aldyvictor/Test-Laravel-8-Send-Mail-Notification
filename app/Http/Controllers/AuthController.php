@@ -132,4 +132,51 @@ class AuthController extends Controller
     {
         //
     }
+
+    public function otpVerification(Request $request, $id)
+    {
+        $user = User::with('otpCodes')->find($id);
+        $otpVerified = OtpVerification::orderBy('created_at', 'desc')->firstWhere('user_id', $id);
+
+
+        if ($user->email == $otpVerified->email) {
+            if ($otpVerified->otp_code == $request->otp_code) {
+                $user->update([
+                    'is_verified' => true
+                ]);
+                return response()->json([
+                    'message' => 'Otp Code is Valid, you may sign in'
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => 'Otp Code is invalid'
+                ], 401);
+            }
+        } else {
+            return response()->json([
+                'message' => 'Email is not Invalid !'
+            ], 401);
+        }
+
+
+        // if (!$user) {
+        //     return response()->json([
+        //         'message' => 'Email is invalid'
+        //     ], 400);
+        // } elseif (!$otpVerified) {
+        //     return response()->json([
+        //         'message' => 'Otp is invalid'
+        //     ], 400);
+        // } else {
+        //     $user->update([
+        //         'is_verified' => true
+        //     ]);
+
+        //     return response()->json([
+        //         'message' => 'Success confirmation OTP, you may sign in now'
+        //     ]);
+        // }
+
+
+    }
 }
